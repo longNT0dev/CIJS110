@@ -1,5 +1,7 @@
 import { formatCurrency, formatDate, formatUser, isEven, max, sum } from "./utils.js";
 
+import X from "./utils.js";
+
 // Bài 1
 // Ctrl + Space
 // Ctrl + chuột trái vào tên hàm => Đi vào phần xử lý của hàm

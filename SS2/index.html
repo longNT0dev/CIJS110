@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // Câu 3 
+        // let arr = [1, 2, 2, 3, 4, 4, 6, 2, 3, 6]
+        // console.log()
+        // // Set loại bỏ các phần tử trùng lặp trong mảng
+        // let uniqueArr = [...new Set(arr)]
+
+        // Câu 4
+        let arr = [[1, 2], [3, 4]]
+
+        console.log(arr.flat())
+
+        // Câu 7: products là 1 mảng object 
+        const sortProductsByPrice = (products) => {
+            if(!Array.isArray(products)) {
+                console.log("Tham số không hợp lệ")
+                return
+            }
+
+            // Sử dụng sort để sắp xếp
+            products.sort((a, b) => a.price - b.price)
+        }
+
+    </script>
+</body>
+</html>
+
+CommandLine 

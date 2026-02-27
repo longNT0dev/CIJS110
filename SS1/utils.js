@@ -203,7 +203,11 @@ const sortAsc = (arr) => {
 // }
 
 // Trong 1 file có thể có nhiều export
-export { productInfo, greetUser, sumUpTo, square, isEven, firstElement, sum, formatUser, formatCurrency, max, formatDate }
+export { productInfo, greetUser, sumUpTo, square, isEven, firstElement, sum }
+
+export { formatUser, formatCurrency, max, formatDate }
+
+export default a
 
 
 // Trong 1 file chỉ có 1 default export
