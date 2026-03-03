@@ -1,18 +1,34 @@
 import React from 'react'
 import CardHeader from '../CardHeader/CardHeader'
-import CardList from '../CardList/CardList'
+import CardItem from '../CardItem/CardItem'
+import "./CardContainer.css"
+import { tasks } from '../../data/data'
 
-function CardContainer() {
-  return (
-    <>
-      <CardHeader />
+function CardContainer({title}) {
 
-      <CardList />
-      {/* <CardHeader>
-        Cần truyền thẻ con 
-      </CardHeader> */}
-    </>
-  )
+    return (
+        <div>
+            <div>
+                <span>Todo</span>
+                <span>3</span>
+            </div>
+
+            <div>
+                <span>+</span>
+                <span>...</span>
+            </div>
+
+            <div className="card-content">
+                {
+                    // Bên trong đây sẽ là javascript
+                    tasks.map( (task, i) => (
+                        <CardItem key={`task-${i + 1}`} taskData={task}></CardItem>
+                    ) )
+                }
+            </div>
+
+        </div>
+    )
 }
 
 export default CardContainer
