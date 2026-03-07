@@ -1,32 +1,27 @@
 import React from 'react'
-import CardHeader from '../CardHeader/CardHeader'
-import CardItem from '../CardItem/CardItem'
 import "./CardContainer.css"
-import { tasks } from '../../data/data'
+import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
+import CardItem from '../CardItem/CardItem'
 
-function CardContainer({title}) {
-
+function CardContainer({ title, tasks = [] }) {
     return (
-        <div>
-            <div>
-                <span>Todo</span>
-                <span>3</span>
-            </div>
-
-            <div>
-                <span>+</span>
-                <span>...</span>
+        <div className="card-container">
+            <div className="container-header">
+                <div className="container-header-left">
+                    <span className="container-title">{title}</span>
+                    <span className="container-count">{tasks.length}</span>
+                </div>
+                <div className="container-header-right">
+                    <button className="icon-btn"><PlusOutlined /></button>
+                    <button className="icon-btn"><EllipsisOutlined /></button>
+                </div>
             </div>
 
             <div className="card-content">
-                {
-                    // Bên trong đây sẽ là javascript
-                    tasks.map( (task, i) => (
-                        <CardItem key={`task-${i + 1}`} taskData={task}></CardItem>
-                    ) )
-                }
+                {tasks.map((task, i) => (
+                    <CardItem key={`task-${i + 1}`} taskData={task} />
+                ))}
             </div>
-
         </div>
     )
 }

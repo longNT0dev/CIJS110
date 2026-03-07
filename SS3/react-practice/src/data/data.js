@@ -20,7 +20,7 @@ export const flags = [
     { flagId: 3, name: "High", color: "#FF0000" }   // Đỏ - Mức cao
 ];
 
-export const tasks = [
+export const data = [
     {
         taskId: 1,
         title: "Mobile Wireframes",

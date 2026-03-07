@@ -1,8 +1,93 @@
+.card-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  background-color: #eef0f4;
+  border-radius: 14px;
+  padding: 14px 12px;
+  gap: 12px;
+}
+
+/* ===== HEADER ===== */
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.container-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.container-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a2e;
+  letter-spacing: -0.2px;
+}
+
+.container-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  background-color: #d4d8e2;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a4a6a;
+  padding: 0 6px;
+}
+
+.container-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b778c;
+  font-size: 15px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.icon-btn:hover {
+  background-color: #d4d8e2;
+  color: #1a1a2e;
+}
+
+/* ===== CARDS LIST ===== */
 .card-content {
   display: flex;
   flex-direction: column;
-  width: 335px;
-  height: 475px;
+  gap: 10px;
   overflow-y: auto;
-  row-gap: 12px;
+  max-height: calc(100vh - 220px);
+  padding-right: 2px;
+}
+
+.card-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: #c4c9d6;
+  border-radius: 4px;
 }
