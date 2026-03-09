@@ -3,7 +3,7 @@ import "./CardContainer.css"
 import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
 import CardItem from '../CardItem/CardItem'
 
-function CardContainer({ title, tasks = [] }) {
+function CardContainer({ title, openModalEdit, openModalDelete, tasks = [] }) {
     return (
         <div className="card-container">
             <div className="container-header">
@@ -19,7 +19,7 @@ function CardContainer({ title, tasks = [] }) {
 
             <div className="card-content">
                 {tasks.map((task, i) => (
-                    <CardItem key={`task-${i + 1}`} taskData={task} />
+                    <CardItem key={`task-${i + 1}`} taskData={task} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
                 ))}
             </div>
         </div>

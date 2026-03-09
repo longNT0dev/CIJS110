@@ -5,8 +5,8 @@ import { PaperClipOutlined, FlagFilled, ClockCircleOutlined } from '@ant-design/
 import { flags, users } from '../../data/data'
 import { formatDate } from '../../utils/dateFormat'
 
-function CardItem({ taskData }) {
-    const { title, description, assignedTo, attachments, flagId, deadline } = taskData
+function CardItem({ taskData, openModalEdit, openModalDelete }) {
+    const { title, description, assignedTo, attachments, flagId, deadline, taskId } = taskData
     const flagColor = flags.find(flag => flag.flagId == flagId)?.color || "#000000"
     const userName = users.find(user => user.userId == assignedTo)?.name || "Unassigned"
 
@@ -14,7 +14,8 @@ function CardItem({ taskData }) {
         <div className="card">
             <div className="card-header">
                 <span className="card-title">{title}</span>
-                <span className="card-edit">✏️</span>
+                <span className="card-edit" onClick={() => openModalEdit(taskId)}>✏️</span>
+                <span className="card-edit" onClick={() => openModalDelete(taskId)}>X</span>
             </div>
 
             <div className="card-desc">
