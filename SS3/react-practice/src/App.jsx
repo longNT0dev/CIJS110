@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import CardContainer from './components/CardContainer/CardContainer'
-import { Modal, Form, Input, Select, DatePicker, Button } from 'antd';
+import { Modal, Form, Input, Select, DatePicker, Button, Spin } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { data, users } from './data/data';
+import { BASE_URL, users } from './data/data';
 import dayjs from 'dayjs';
 
 const { TextArea } = Input;
@@ -15,12 +15,14 @@ const todoDefault = {
   statusId: 1, // To Do
   flagId: 1, // Medium
   assignedTo: -1, // userId
-  deadline: new Date(),
+  deadline: dayjs(),
   attachments: []
 }
 
 function App() {
-  const [tasks, setTasks] = useState(data)
+  const [data, setData] = useState([]) // Dữ liệu gốc lấy từ server về, không bị thay đổi khi filter
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(false)
   const todoTasks = tasks.filter(el => el.statusId === 1)
   const inProgressTasks = tasks.filter(el => el.statusId === 2)
   const inReviewTasks = tasks.filter(el => el.statusId === 3)
@@ -29,6 +31,63 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTodo, setNewTodo] = useState(todoDefault)
   const [deleteTaskId, setDeleteTaskId] = useState(null)
+
+
+  // Chạy ở lần render đầu tiên và mỗi khi component được render lại (state thay đổi)
+  // useEffect(() => {
+  //   // Gọi API => Mình không dùng tới (tối ưu)
+  // })
+
+  // Chạy ở lần render đầu tiên => Hay sử dụng để gọi API 
+  useEffect(() => {
+    // Gọi API với fetch cơ bản sẽ dụng METHOD GET
+    // fetch(`${BASE_URL}/todoe`)
+    //   .then(res => res.json()) // Đợi response trả về từ server
+    //   .then(result => { // Đợi kết quả đã được chuyển đổi sang dạng JSON
+    //     console.log("Kết quả trả về từ server", result)
+    //     if (Array.isArray(result)) {
+    //       setTasks([...result]) // Cập nhật lại dữ liệu vào tasks
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log("Lỗi khi gọi API", err)
+    //   })
+    fetchData()
+
+  }, [])
+
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      const res = await fetch(`${BASE_URL}/todoes`)
+      const result = await res.json()
+
+      if (Array.isArray(result)) {
+        // const formatDateResult = result.map(task => ({
+        //   ...task,
+        //   deadline: task.deadline ? dayjs(task.deadline) : null
+        // }))
+
+        setTasks([...result]) // Cập nhật lại dữ liệu vào tasks
+        setData([...result]) // Cập nhật lại dữ liệu vào data
+      }
+
+      setLoading(false)
+    } catch (err) {
+      setLoading(false)
+      console.log("Lỗi khi gọi API", err)
+      // Thông báo lỗi
+      // Reset giá trị mặc định của component
+      // Xử lý lỗi khác
+    }
+  }
+
+  // Chạy ở lần render đầu tiên và mỗi khi state1, state2,... thay đổi
+  // useEffect(() => {
+  //   // Gọi API
+  // }, [state1, state2,...])
+
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -39,14 +98,24 @@ function App() {
 
     if (newTodo.taskId === -1) {
       // Cập nhật lại TaskId cho newTodo
+      // Có thể bỏ việc truyền taskId thủ công
       const newItem = {
         ...newTodo,
-        taskId: data.length + 1
+        // taskId: data.length + 1
       }
 
       setNewTodo(newItem)
+
       // Đẩy todo mới vào danh sách
-      data.push(newItem)
+      // data.push(newItem)
+      // Thay bằng việc gọi API POST để thêm mới dữ liệu
+      fetch(`${BASE_URL}/todoes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newItem)
+      })
 
       setIsModalOpen(false);
     } else {
@@ -81,13 +150,17 @@ function App() {
   }
 
   const handleChangeInput = (e, name) => {
+    console.log("Giá trị", e)
+    console.log("Tên key", name)
     const finalName = name ? name : e.target.name
+    console.log("Tên key cuối cùng", finalName)
+    console.log("Giá trị key cuối cùng", e.target.value)
     setNewTodo({
       ...newTodo,
       // Cập nhật lại các key thay đổi
       // name => String key tên là name, [name] => Lấy giá trị của biến name làm key
       // Một giá null, undefined nếu . lấy key => Báo lỗi
-      [finalName]: e?.target?.value ? e.target.value : e
+      [finalName]: !name ? e.target.value : e
     })
     // switch (name) {
     //   case "deadline":
@@ -311,6 +384,8 @@ function App() {
         </div>
       </Modal>
 
+      {loading && <Spin fullscreen="true" />}
+
       <footer>© 2026 TaskBoard · All rights reserved</footer>
     </div>
   )
@@ -342,3 +417,17 @@ export default App
 // addEventListener("click", (event) => {
 
 // })
+
+// CRUD: Create, Read, Update, Delete
+// Màn hình hiển thị dữ liệu => API GET dùng để lấy dữ liệu từ server trả về
+// Thêm mới dữ liệu => API POST dùng để gửi dữ liệu mới lên server
+// Cập nhật dữ liệu => API PUT/PATCH dùng để gửi dữ liệu đã được chỉnh sửa lên server
+// Xóa dữ liệu => API DELETE dùng để yêu cầu server xóa đi một dữ liệu nào đó
+
+// =>
+// 1. Vi pham chuẩn RESTful API
+// 2. GET => Thêm mới dữ liệu (body) => GET không cho phép truyền dữ liệu qua body => Truyền dữ liệu đơn giản dạng string
+// 3. POST => Lấy dữ liệu (không có cache)
+// 4. PUT/PATCH => PUT (thay đổi dữ liệu ban đầu), PATCH (chỉ thay đổi 1 phần dữ liệu)
+
+// Dùng JSON.stringify() để chuyển đổi dữ liệu thành chuỗi JSON thành sttring lưu DB
