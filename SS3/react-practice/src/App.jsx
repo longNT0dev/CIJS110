@@ -430,4 +430,15 @@ export default App
 // 3. POST => Lấy dữ liệu (không có cache)
 // 4. PUT/PATCH => PUT (thay đổi dữ liệu ban đầu), PATCH (chỉ thay đổi 1 phần dữ liệu)
 
-// Dùng JSON.stringify() để chuyển đổi dữ liệu thành chuỗi JSON thành sttring lưu DB
+// Dùng JSON.stringify() để chuyển đổi dữ liệu thành chuỗi JSON thành string lưu DB
+
+
+
+/* Bài tập
+1. Khai báo context User để quản lý thông tin chi tiết người dùng, trạng thái đăng nhập => Có thể đọc, cập nhật dữ liệu ở tất cả mọi component, không cần phải truyền props qua nhiều cấp component 
+2. Cấu hình router cơ bản cho bài toán yêu cầu có ít nhất 2 trang
+  2.1. Trang đăng nhập => Hiển thị Trang đăng nhập chứa chữ "Chào mừng bạn tới với trang đăng nhập"
+  2.2. Trang đăng ký => Hiển thị Trang đăng ký chứa chữ "Chào mừng bạn tới với trang đăng ký"
+  2.3. Trang chủ => Hiển thị trang TodoList
+3. Chỉ ra những chỗ có thể tối ưu trong bài toán TodoList hiện tại với useMemo, memo, useCallback
+*/
