@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import CardContainer from './components/CardContainer/CardContainer'
 import { Modal, Form, Input, Select, DatePicker, Button, Spin } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { BASE_URL, users } from './data/data';
 import dayjs from 'dayjs';
+import { UserContext } from './contexts/UserContext';
+import Login from './components/Login/Login';
+import Register from './components/Register/Register';
+import { Link, Route, Routes } from 'react-router';
 
 const { TextArea } = Input;
 
@@ -32,6 +36,15 @@ function App() {
   const [newTodo, setNewTodo] = useState(todoDefault)
   const [deleteTaskId, setDeleteTaskId] = useState(null)
 
+  const inputRef = useRef()
+
+  const [user, setUser] = useState({
+    name: "Nguyễn Thành Long",
+    email: "admin@gmail.com",
+    dob: "09/03/2000",
+    isLoggedIn: false,
+  })
+
 
   // Chạy ở lần render đầu tiên và mỗi khi component được render lại (state thay đổi)
   // useEffect(() => {
@@ -54,6 +67,15 @@ function App() {
     //   })
     fetchData()
 
+  }, [])
+
+
+  useEffect(() => {
+    // Chạy khi html render xong
+    console.log(inputRef)
+    if(inputRef.current) {
+      inputRef.current.focus() // Tham chiếu tới phần tử input và focus vào đó
+    }
   }, [])
 
 
@@ -240,91 +262,139 @@ function App() {
   }
 
   return (
-    <div className='container'>
-      <header>
-        <span className="navbar-logo">TaskBoard</span>
-      </header>
+    <UserContext.Provider value={{ user, setUser }}>
+      <div className='container'>
+        <header>
+          <span className="navbar-logo">TaskBoard</span>
+          <Link to="/login">Chuyển hướng tới trang đăng nhập</Link>
+        </header>
 
-      <main>
-        <div className="search-bar">
-          <Input
-            style={{ width: '220px', height: '36px', borderRadius: '8px' }}
-            prefix={<SearchOutlined style={{ color: '#9fa3b0' }} />}
-            placeholder="Search items"
-            onChange={handleChange}
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={showModal}
-          >
-            New Item
-          </Button>
-        </div>
+        <main>
+          <Routes>
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/' element={
+              <>
+                <div className="search-bar">
+                  <Input
+                    ref={inputRef}
+                    style={{ width: '220px', height: '36px', borderRadius: '8px' }}
+                    prefix={<SearchOutlined style={{ color: '#9fa3b0' }} />}
+                    placeholder="Search items"
+                    onChange={handleChange}
+                  />
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={showModal}
+                  >
+                    New Item
+                  </Button>
+                </div>
 
-        <div className="board-wrapper">
-          <CardContainer title="To do" tasks={todoTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
-          <CardContainer title="In Progress" tasks={inProgressTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
-          <CardContainer title="In Review" tasks={inReviewTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
-          <CardContainer title="Done" tasks={doneTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
-        </div>
-      </main>
+                <div className="board-wrapper">
+                  <CardContainer title="To do" tasks={todoTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
+                  <CardContainer title="In Progress" tasks={inProgressTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
+                  <CardContainer title="In Review" tasks={inReviewTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
+                  <CardContainer title="Done" tasks={doneTasks} openModalEdit={openModalEdit} openModalDelete={openModalDelete} />
+                </div>
+              </>
+            } />
+            <Route path="*" element={<p>Not found</p>}></Route>
+          </Routes>
+        </main>
 
-      <Modal
-        title="Save task"
-        open={isModalOpen}
-        onCancel={handleCancel}
-        footer={null}
-        width={500}
-      >
-        <Form layout="vertical">
-          <div style={{ display: "flex", gap: "12px" }}>
 
-            <Form.Item
-              label="Title"
-              rules={[{ required: true, message: "Title is required" }]}
-              style={{ flex: 1 }}
-            >
-              <Input placeholder="Type title of task" name="title" value={newTodo.title} onChange={handleChangeInput} />
+        <footer>© 2026 TaskBoard · All rights reserved</footer>
+
+        <Modal
+          title="Save task"
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+          width={500}
+        >
+          <Form layout="vertical">
+            <div style={{ display: "flex", gap: "12px" }}>
+
+              <Form.Item
+                label="Title"
+                rules={[{ required: true, message: "Title is required" }]}
+                style={{ flex: 1 }}
+              >
+                <Input placeholder="Type title of task" name="title" value={newTodo.title} onChange={handleChangeInput} />
+              </Form.Item>
+
+              <Form.Item
+                label="End Date"
+              >
+                <DatePicker format="DD/MM/YYYY" name="deadline" value={newTodo.deadline} onChange={(e) => handleChangeInput(e, "deadline")} />
+              </Form.Item>
+
+            </div>
+
+            <Form.Item label="Description">
+              <TextArea name="description" value={newTodo.description} onChange={handleChangeInput} rows={3} placeholder="Type description..." />
             </Form.Item>
 
-            <Form.Item
-              label="End Date"
-            >
-              <DatePicker format="DD/MM/YYYY" name="deadline" value={newTodo.deadline} onChange={(e) => handleChangeInput(e, "deadline")} />
-            </Form.Item>
+            <div style={{ display: "flex", gap: "12px" }}>
 
-          </div>
+              <Form.Item label="Status" style={{ flex: 1 }}>
+                <Select placeholder="Choose status" name="statusId" value={newTodo.statusId} onChange={(e) => handleChangeInput(e, "statusId")}>
+                  <Option value={1}>To do</Option>
+                  <Option value={2}>In Progress</Option>
+                  <Option value={3}>In Review</Option>
+                  <Option value={4}>Done</Option>
+                </Select>
+              </Form.Item>
 
-          <Form.Item label="Description">
-            <TextArea name="description" value={newTodo.description} onChange={handleChangeInput} rows={3} placeholder="Type description..." />
-          </Form.Item>
+              <Form.Item label="Assign" style={{ flex: 1 }}>
+                <Select name="assignedTo" value={newTodo.assignedTo} onChange={(e) => handleChangeInput(e, "assignedTo")}>
+                  {
+                    users.map((user, i) => (
+                      <Option key={`user-${i}`} value={user.userId}>{user.name}</Option>
+                    ))
+                  }
 
-          <div style={{ display: "flex", gap: "12px" }}>
-
-            <Form.Item label="Status" style={{ flex: 1 }}>
-              <Select placeholder="Choose status" name="statusId" value={newTodo.statusId} onChange={(e) => handleChangeInput(e, "statusId")}>
-                <Option value={1}>To do</Option>
-                <Option value={2}>In Progress</Option>
-                <Option value={3}>In Review</Option>
-                <Option value={4}>Done</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item label="Assign" style={{ flex: 1 }}>
-              <Select name="assignedTo" value={newTodo.assignedTo} onChange={(e) => handleChangeInput(e, "assignedTo")}>
-                {
-                  users.map((user, i) => (
-                    <Option key={`user-${i}`} value={user.userId}>{user.name}</Option>
-                  ))
-                }
-
-                {/* <Option value="a">Nguyễn Văn A</Option>
+                  {/* <Option value="a">Nguyễn Văn A</Option>
                 <Option value="b">Trần Văn B</Option> */}
-              </Select>
-            </Form.Item>
+                </Select>
+              </Form.Item>
 
-          </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "10px",
+                marginTop: "10px"
+              }}
+            >
+              <Button onClick={handleCancel}>
+                Cancel
+              </Button>
+
+              <Button
+                type="primary"
+                style={{
+                  background: "linear-gradient(90deg,#6a5af9,#7c4dff)",
+                  border: "none"
+                }}
+                onClick={handleOk}
+              >
+                Save
+              </Button>
+            </div>
+          </Form>
+        </Modal>
+
+        <Modal title="Xác nhận xóa công việc"
+          open={deleteTaskId !== null}
+          onCancel={closeModalDelete}
+          footer={null}
+          width={500}>
+          <p>Bạn có chắc chắn muốn xóa công việc này không?</p>
 
           <div
             style={{
@@ -334,7 +404,7 @@ function App() {
               marginTop: "10px"
             }}
           >
-            <Button onClick={handleCancel}>
+            <Button onClick={closeModalDelete}>
               Cancel
             </Button>
 
@@ -344,50 +414,18 @@ function App() {
                 background: "linear-gradient(90deg,#6a5af9,#7c4dff)",
                 border: "none"
               }}
-              onClick={handleOk}
+              onClick={handleDeleteToDo}
             >
-              Save
+              Accept
             </Button>
           </div>
-        </Form>
-      </Modal>
+        </Modal>
 
-      <Modal title="Xác nhận xóa công việc"
-        open={deleteTaskId !== null}
-        onCancel={closeModalDelete}
-        footer={null}
-        width={500}>
-        <p>Bạn có chắc chắn muốn xóa công việc này không?</p>
+        {loading && <Spin fullscreen="true" />}
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "10px",
-            marginTop: "10px"
-          }}
-        >
-          <Button onClick={closeModalDelete}>
-            Cancel
-          </Button>
 
-          <Button
-            type="primary"
-            style={{
-              background: "linear-gradient(90deg,#6a5af9,#7c4dff)",
-              border: "none"
-            }}
-            onClick={handleDeleteToDo}
-          >
-            Accept
-          </Button>
-        </div>
-      </Modal>
-
-      {loading && <Spin fullscreen="true" />}
-
-      <footer>© 2026 TaskBoard · All rights reserved</footer>
-    </div>
+      </div>
+    </UserContext.Provider>
   )
 }
 
@@ -440,5 +478,9 @@ export default App
   2.1. Trang đăng nhập => Hiển thị Trang đăng nhập chứa chữ "Chào mừng bạn tới với trang đăng nhập"
   2.2. Trang đăng ký => Hiển thị Trang đăng ký chứa chữ "Chào mừng bạn tới với trang đăng ký"
   2.3. Trang chủ => Hiển thị trang TodoList
-3. Chỉ ra những chỗ có thể tối ưu trong bài toán TodoList hiện tại với useMemo, memo, useCallback
+3. Chỉ ra những chỗ có thể tối ưu trong bài toán TodoList hiện tại với 
+useMemo: Cache (Lưu trữ lại kết quả tính toán nặng)
+memo: HOC (Higher Order Component) => cache lại component, không re-render lại component khi props truyền vào không thay đổi 
+useCallback: Cache lại hàm, không khởi tạo lại hàm => Không tạo thêm địa chỉ ô nhớ mới nữa
+useRef: Tham chiếu tới một phân tử trên giao diện
 */

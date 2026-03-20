@@ -4,11 +4,13 @@ import './CardItem.css'
 import { PaperClipOutlined, FlagFilled, ClockCircleOutlined } from '@ant-design/icons'
 import { flags, users } from '../../data/data'
 import { formatDate } from '../../utils/dateFormat'
+import { useUserContext } from '../../contexts/UserContext'
 
 function CardItem({ taskData, openModalEdit, openModalDelete }) {
     const { title, description, assignedTo, attachments, flagId, deadline, taskId } = taskData
     const flagColor = flags.find(flag => flag.flagId == flagId)?.color || "#000000"
     const userName = users.find(user => user.userId == assignedTo)?.name || "Unassigned"
+    const { user, setUser } = useUserContext()
 
     return (
         <div className="card">
@@ -19,7 +21,7 @@ function CardItem({ taskData, openModalEdit, openModalDelete }) {
             </div>
 
             <div className="card-desc">
-                {description}
+                {description} {user.dob}
             </div>
 
             <Button className="card-btn">

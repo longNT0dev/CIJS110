@@ -2,13 +2,16 @@ import React from 'react'
 import "./CardContainer.css"
 import { PlusOutlined, EllipsisOutlined } from '@ant-design/icons'
 import CardItem from '../CardItem/CardItem'
+import { useUserContext } from '../../contexts/UserContext'
 
 function CardContainer({ title, openModalEdit, openModalDelete, tasks = [] }) {
+   const { user, setUser } = useUserContext()
+
     return (
         <div className="card-container">
             <div className="container-header">
                 <div className="container-header-left">
-                    <span className="container-title">{title}</span>
+                    <span className="container-title">{title} {user.name}</span>
                     <span className="container-count">{tasks.length}</span>
                 </div>
                 <div className="container-header-right">
